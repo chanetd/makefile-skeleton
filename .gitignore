@@ -1,0 +1,4 @@
+.*.swp
+.*.swo
+*~
+cmd/hello/hello
