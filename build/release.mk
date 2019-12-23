@@ -50,14 +50,13 @@ release-notes:
 	@$(EDITOR) ./release-notes
 
 
-# the following variables are lazily evaluated; they only make sense in the release context
-_tag_subject=$(shell git tag -l v$(VERSION) --format="%(subject)")
-_tag_body=$(shell git tag -l v$(VERSION) --format="%(body)")
-_upstream=$(shell git remote show -n origin | grep "Fetch URL" | cut -d ':' -f 2- | sed 's/.*github.com:\?\/\?\([^.]*\)\(\.git\)\?/\1/')
-_req=$(shell echo '{}' | jq -c --arg tag "$(VERSION)" --arg name "$(_tag_subject)" --arg body "$(_tag_body)" '.tag_name=$$tag | .name=$$name | .body=$$body')
-
 .PHONY: github-make-release
 github-make-release:
-	curl -sf -XPOST --data-binary "$(_req)" https://api.github.com/repos/$(_upstream)/releases?access_token=$(GITHUB_TOKEN)
-
-
+	git tag -l v$(VERSION) --format="%(subject)" > .tagsubject
+	git tag -l v$(VERSION) --format="%(body)" > .tagbody
+	git ls-remote --get-url | sed 's#.*github.com[:/]##' | sed s'/\.git$$//' > .upstream
+	echo '{}' | \
+	    jq -c --arg tag "$(VERSION)" --arg name "$$(cat .tagsubject)" --arg body \
+	    "$$(cat .tagbody)" '.tag_name=$$tag | .name=$$name | .body=$$body' > .req
+	curl -sf -XPOST --data-binary @.req https://api.github.com/repos/$$(cat .upstream)/releases?access_token=$(GITHUB_TOKEN)
+	rm .tagsubject .tagbody .upstream .req
