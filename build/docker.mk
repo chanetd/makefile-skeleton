@@ -5,31 +5,26 @@ REPO?=$(shell cat REPO)
 _conf_docker := $(shell [ -f ./Dockerfile ] && echo y || echo n)
 
 .PHONY: docker docker-build docker-push
-docker: docker-$(_conf_docker)
-docker-build: docker-build-$(_conf_docker)
-docker-push: docker-push-$(_conf_docker)
+docker: docker-push
 
-.PHONY: docker-y
-docker-y: docker-push-y
+ifeq ($(_conf_docker), y)
+docker-build: docker-prerequisites
+	$(call inform, Building docker container)
+	@docker build -t $(REPO):$(VERSION) .
 
-.PHONY: docker-n
-docker-n:
-	@echo "No Dockerfile in root directory -- not building or pushing a Docker container"
+docker-push: docker-build
+	$(call inform, Pushing docker container)
+	@docker push $(REPO):$(VERSION)
 
-.PHONY: docker-build-y 
-docker-build-y: docker-prerequisites-y
-	docker build -t ${REPO}:${VERSION} .
+.PHONY: docker-prerequisites
+docker-prerequisites:
+	$(call fail-if, [ -n "$(REPO)" ], docker repository is not defined; please create the REPO file)
 
-.PHONY: docker-build-n
-docker-build-n: ;
+else
 
-.PHONY: docker-push-y
-docker-push-y: docker-build-y
-	docker push ${REPO}:${VERSION}
-	
-.PHONY: docker-push-n
-docker-push-n: ;
+docker-push: docker-build ;
 
-.PHONY: docker-prerequisites-y
-docker-prerequisites-y:
-	[ -n "$(REPO)" ] || (echo "docker repository is not defined; please create the REPO file" && false)
+docker-build:
+	$(call inform, No Dockerfile in root directory -- not building or pushing a docker container)
+
+endif
