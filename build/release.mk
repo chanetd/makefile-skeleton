@@ -6,7 +6,7 @@ Are you sure? (y/n)
 endef
 
 .PHONY: prerelease-checks
-prerelease-checks: git-is-clean test
+prerelease-checks: git-is-clean $(PRERELEASE_CHECKS)
 	$(call fail-if, [ -z "$$GITHUB_TOKEN" ], GITHUB_TOKEN env var is not set.)
 	$(call ask-for-confirmation, $(release-message))
 

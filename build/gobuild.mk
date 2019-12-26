@@ -22,3 +22,8 @@ compile:
 test:
 	$(call inform, Running go test)
 	@go test ./...
+
+.PHONY: lint
+lint:
+	$(call inform, Linting)
+	@golangci-lint run

@@ -1,1 +1,2 @@
-.DEFAULT_GOAL := all
+.DEFAULT_GOAL := compile
+PRERELEASE_CHECKS ?= test lint
