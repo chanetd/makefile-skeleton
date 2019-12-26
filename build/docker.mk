@@ -8,7 +8,7 @@ _conf_docker := $(shell [ -f ./Dockerfile ] && echo y || echo n)
 docker: docker-push
 
 ifeq ($(_conf_docker), y)
-docker-build: docker-prerequisites
+docker-build: docker-prerequisites staticbuild
 	$(call inform, Building docker container)
 	@docker build -t $(REPO):$(VERSION) .
 
@@ -22,9 +22,10 @@ docker-prerequisites:
 
 else
 
-docker-push: docker-build ;
+docker-push: docker-build
+	$(call inform, No Dockerfile in root directory -- not pushing a docker container)
 
 docker-build:
-	$(call inform, No Dockerfile in root directory -- not building or pushing a docker container)
+	$(call inform, No Dockerfile in root directory -- not building a docker container)
 
 endif

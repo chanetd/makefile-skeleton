@@ -7,6 +7,7 @@ endef
 
 .PHONY: prerelease-checks
 prerelease-checks: git-is-clean test
+	$(call fail-if, [ -z "$$GITHUB_TOKEN" ], GITHUB_TOKEN env var is not set.)
 	$(call ask-for-confirmation, $(release-message))
 
 .PHONY: git-is-clean
@@ -19,6 +20,7 @@ git-is-clean:
 .PHONY: release
 release: prerelease-checks
 	@$(MAKE) docker-push VERSION=$(RELEASE_VERSION)
+	@$(MAKE) update-licenses VERSION=$(RELEASE_VERSION)
 	@$(MAKE) set-version VERSION=$(RELEASE_VERSION)
 	@$(MAKE) tag-release VERSION=$(RELEASE_VERSION)
 	@$(MAKE) github-make-release VERSION=$(RELEASE_VERSION)
@@ -61,3 +63,22 @@ github-make-release:
 	    "$$(cat .tagbody)" '.tag_name=$$tag | .name=$$name | .body=$$body' > .req
 	@curl -sf -XPOST --data-binary @.req https://api.github.com/repos/$$(cat .upstream)/releases?access_token=$(GITHUB_TOKEN)
 	@rm .tagsubject .tagbody .upstream .req
+
+
+.PHONY: update-licenses
+update-licenses:
+	$(call inform, Updating licenses.csv)
+	@go mod tidy
+	@go mod download
+	@echo 'Category,License,Dependency,Notes' > licenses.csv
+	@go list -m -f '{{ .Path }}' all | grep -v Klarrio > .mods
+	@for mod in $$(cat .mods) ; do \
+	    modpath=$$(go list -m -f '{{ .Dir }}' $$mod) ; \
+	    license=$$(license-detector -f json $$modpath | jq -r '.[0].matches[0].license') ; \
+	    echo "$$license,$$license,$$mod," >> licenses.csv ; \
+	done
+	@rm .mods
+	@git add licenses.csv
+	@git commit -m "update licenses.csv (auto-generated)"
+	@git push
+
