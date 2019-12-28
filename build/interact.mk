@@ -11,7 +11,7 @@ define nl :=
 endef
 
 define escape-newlines
-$(subst $(nl), \n, $(1))
+$(subst $(nl),\n,$(1))
 endef
 
 # pretty colors
@@ -25,20 +25,20 @@ CYAN=\033[1;36m
 WHITE=\033[1;37m
 
 define inform # args: message
-$(call say, $(WHITE), $(1))
+$(call say,$(WHITE),$(1))
 endef
 
 define warn # args: message
-$(call say, $(YELLOW), $(1))
+$(call say,$(YELLOW),$(1))
 endef
 
 define fatal # args: message
-$(call say, $(RED), $(1))
+$(call say,$(RED),$(1))
 @false
 endef
 
 define say # args: color, message
-@echo -e "$(1)$(call escape-newlines, $(2))$(NORMAL)"
+@echo -e "$(1)$(call escape-newlines,$(2))$(NORMAL)"
 endef
 
 define ask-for-confirmation
@@ -51,5 +51,5 @@ $(shell ($(1) > /dev/null 2> /dev/null) && echo y)
 endef
 
 define fail-if # args: condition, message
-$(if $(call shell-condition, $(1)), $(call fatal, $(2)), )
+$(if $(call shell-condition, $(1)), $(call fatal,$(2)), )
 endef
