@@ -11,11 +11,11 @@ $(silent)cd $(1) && $(2)
 endef
 
 .PHONY: staticbuild
-staticbuild:
+$(call overridable,staticbuild):
 	$(foreach d, $(BINDIRS), $(call build-one, $(d), $(_static_build_cmd)))
 
 .PHONY: compile
-compile:
+$(call overridable,compile):
 ifneq ($(strip $(BINDIRS)), )
 	$(foreach d, $(BINDIRS), $(call build-one, $(d), $(_quick_build_cmd)))
 else
@@ -23,11 +23,11 @@ else
 endif
 
 .PHONY: test
-test:
-	$(call inform, Running go test)
+$(call overridable,test):
+	$(call inform,Running go test)
 	$(silent)go test ./...
 
 .PHONY: lint
-lint:
-	$(call inform, Linting)
+$(call overridable,lint):
+	$(call inform,Linting)
 	$(silent)golangci-lint run

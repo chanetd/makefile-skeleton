@@ -5,15 +5,15 @@ REPO?=$(shell cat REPO)
 _conf_docker := $(shell [ -f ./Dockerfile ] && echo y || echo n)
 
 .PHONY: docker docker-build docker-push
-docker: docker-push
+$(call overridable,docker): docker-push
 
 ifeq ($(_conf_docker), y)
-docker-build: docker-prerequisites staticbuild
-	$(call inform, Building docker container)
+$(call overridable,docker-build): docker-prerequisites staticbuild
+	$(call inform,Building docker container)
 	$(silent)docker build -t $(REPO):$(VERSION) .
 
-docker-push: docker-build
-	$(call inform, Pushing docker container)
+$(call overridable,docker-push): docker-build
+	$(call inform,Pushing docker container)
 	$(silent)docker push $(REPO):$(VERSION)
 
 .PHONY: docker-prerequisites
@@ -22,10 +22,10 @@ docker-prerequisites:
 
 else
 
-docker-push: docker-build
-	$(call inform, No Dockerfile in root directory -- not pushing a docker container)
+$(call overridable,docker-push): docker-build
+	$(call inform,No Dockerfile in root directory -- not pushing a docker container)
 
-docker-build:
-	$(call inform, No Dockerfile in root directory -- not building a docker container)
+$(call overridable,docker-build):
+	$(call inform,No Dockerfile in root directory -- not building a docker container)
 
 endif

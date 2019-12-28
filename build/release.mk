@@ -7,18 +7,18 @@ endef
 
 .PHONY: prerelease-checks
 prerelease-checks: git-is-clean $(PRERELEASE_CHECKS)
-	$(call fail-if, [ -z "$$GITHUB_TOKEN" ], GITHUB_TOKEN env var is not set.)
+	$(call fail-if, [ -z "$$GITHUB_TOKEN" ],GITHUB_TOKEN env var is not set.)
 	$(call ask-for-confirmation, $(release-message))
 
 .PHONY: git-is-clean
 git-is-clean:
-	$(call inform, Checking if the git repository is clean)
+	$(call inform,Checking if the git repository is clean)
 	$(silent)git fetch --tags
-	$(call fail-if, [ -n "`git status --porcelain`" ], git is not clean)
+	$(call fail-if, [ -n "`git status --porcelain`" ],Git is not clean)
 
 
 .PHONY: release
-release: prerelease-checks
+$(call overridable,release): prerelease-checks
 	$(silent)$(MAKE) docker-push VERSION=$(RELEASE_VERSION)
 	$(silent)$(MAKE) update-licenses VERSION=$(RELEASE_VERSION)
 	$(silent)$(MAKE) set-version VERSION=$(RELEASE_VERSION)
@@ -66,7 +66,7 @@ github-make-release:
 
 
 .PHONY: update-licenses
-update-licenses:
+$(call overridable,update-licenses):
 	$(call inform, Updating licenses.csv)
 	$(silent)go mod tidy
 	$(silent)go mod download
