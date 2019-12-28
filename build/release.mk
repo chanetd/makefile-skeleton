@@ -5,6 +5,9 @@ This change will be pushed straight to origin.
 Are you sure? (y/n)
 endef
 
+_help_confvar_PRERELEASE_CHECKS := list of Makefile targets that perform prerelease checks (current: $(PRERELEASE_CHECKS))
+_help_var_GITHUB_TOKEN := GitHub token, needed to create releases on GitHub
+
 .PHONY: prerelease-checks
 prerelease-checks: git-is-clean $(PRERELEASE_CHECKS)
 	$(call fail-if, [ -z "$$GITHUB_TOKEN" ],GITHUB_TOKEN env var is not set.)
@@ -17,6 +20,7 @@ git-is-clean:
 	$(call fail-if, [ -n "`git status --porcelain`" ],Git is not clean)
 
 
+_help_target_release := Tag release, update licenses, create release notes and create Github release
 .PHONY: release
 $(call overridable,release): prerelease-checks
 	$(silent)$(MAKE) docker-push VERSION=$(RELEASE_VERSION)

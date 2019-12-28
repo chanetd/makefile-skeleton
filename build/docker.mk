@@ -4,6 +4,11 @@ REPO?=$(shell cat REPO)
 
 _conf_docker := $(shell [ -f ./Dockerfile ] && echo y || echo n)
 
+_help_target_docker := Builds and pushes a Docker container
+_help_target_docker-push := Builds and pushes a Docker container
+_help_target_docker-build := Builds a Docker container locally
+_help_var_REPO := Docker repository/tag for container (excluding the version)
+
 .PHONY: docker docker-build docker-push
 $(call overridable,docker): docker-push
 

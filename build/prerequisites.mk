@@ -22,6 +22,7 @@ ifdef installable-missing-prereqs
     endif
 endif
 
+_help_target_install-prerequisites := Install missing prerequisites in ./.bin
 .PHONY: install-prerequisites
 install-prerequisites: .bin $(installable-missing-prereqs:%=install-%) ;
 
