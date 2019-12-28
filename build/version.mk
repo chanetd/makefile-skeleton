@@ -6,7 +6,7 @@ NEXT_VERSION:=$(shell echo $(CLEAN_VERSION) | awk -F. '{ printf("%d.%d.%d", $$1,
 .PHONY: set-version
 set-version:
 	$(call inform, Setting version $(VERSION) in VERSION file)
-	@echo -n $(VERSION) > VERSION
-	@git add VERSION
-	@git commit -m "set version v$(VERSION)"
-	@git push
+	$(silent)echo -n $(VERSION) > VERSION
+	$(silent)git add VERSION
+	$(silent)git commit -m "set version v$(VERSION)"
+	$(silent)git push

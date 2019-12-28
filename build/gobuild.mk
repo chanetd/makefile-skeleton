@@ -6,7 +6,7 @@ _quick_build_cmd := go build -i $(_vendor_arg) .
 
 define build-one # args: dir, build command
 $(call inform, Building $(1))
-@cd $(1) && $(2)
+$(silent)cd $(1) && $(2)
 
 endef
 
@@ -16,14 +16,18 @@ staticbuild:
 
 .PHONY: compile
 compile:
+ifneq ($(strip $(BINDIRS)), )
 	$(foreach d, $(BINDIRS), $(call build-one, $(d), $(_quick_build_cmd)))
+else
+	$(silent)go build -i ./...
+endif
 
 .PHONY: test
 test:
 	$(call inform, Running go test)
-	@go test ./...
+	$(silent)go test ./...
 
 .PHONY: lint
 lint:
 	$(call inform, Linting)
-	@golangci-lint run
+	$(silent)golangci-lint run

@@ -27,21 +27,21 @@ install-prerequisites: .bin $(installable-missing-prereqs:%=install-%) ;
 
 # missing prerequisites are installed in ./.bin
 .bin:
-	@mkdir -p .bin
-	@[ -f .gitignore ] || (touch .gitignore && git add .gitignore)
-	@grep -q -F .bin/ .gitignore || (echo -e '# locally installed build prerequisites\n.bin/' >> .gitignore && git add .gitignore)
+	$(silent)mkdir -p .bin
+	$(silent)[ -f .gitignore ] || (touch .gitignore && git add .gitignore)
+	$(silent)grep -q -F .bin/ .gitignore || (echo -e '# locally installed build prerequisites\n.bin/' >> .gitignore && git add .gitignore)
 
 .PHONY: install-license-detector
 install-license-detector: .bin
 	$(call inform, Installing license-detector)
-	@curl -sfL https://github.com/src-d/go-license-detector/releases/download/v3.0.2/license-detector.$(os)_$(arch).gz | gunzip > .bin/license-detector
-	@chmod +x .bin/license-detector
+	$(silent)curl -sfL https://github.com/src-d/go-license-detector/releases/download/v3.0.2/license-detector.$(os)_$(arch).gz | gunzip > .bin/license-detector
+	$(silent)chmod +x .bin/license-detector
 
 .PHONY: install-golangci-lint
 install-golangci-lint:
 	$(call inform, Installing golangci-lint)
-	@curl -sfL https://github.com/golangci/golangci-lint/releases/download/v1.21.0/golangci-lint-1.21.0-$(os)-$(arch).tar.gz | tar xz -C .bin
-	@mv $$(find ./.bin -name golangci-lint) ./.bin
-	@rm -rf ./.bin/golangci-lint-*
-	@chmod +x ./.bin/golangci-lint
+	$(silent)curl -sfL https://github.com/golangci/golangci-lint/releases/download/v1.21.0/golangci-lint-1.21.0-$(os)-$(arch).tar.gz | tar xz -C .bin
+	$(silent)mv $$(find ./.bin -name golangci-lint) ./.bin
+	$(silent)rm -rf ./.bin/golangci-lint-*
+	$(silent)chmod +x ./.bin/golangci-lint
 

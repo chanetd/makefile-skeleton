@@ -10,11 +10,11 @@ docker: docker-push
 ifeq ($(_conf_docker), y)
 docker-build: docker-prerequisites staticbuild
 	$(call inform, Building docker container)
-	@docker build -t $(REPO):$(VERSION) .
+	$(silent)docker build -t $(REPO):$(VERSION) .
 
 docker-push: docker-build
 	$(call inform, Pushing docker container)
-	@docker push $(REPO):$(VERSION)
+	$(silent)docker push $(REPO):$(VERSION)
 
 .PHONY: docker-prerequisites
 docker-prerequisites:

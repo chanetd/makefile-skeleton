@@ -1,3 +1,9 @@
+ifdef V
+    silent :=
+else
+    silent := @
+endif
+
 # dark-magic trickery to get Make to write out a multi-line value to a file
 define nl :=
 
