@@ -1,7 +1,5 @@
 .PHONY: docker docker-build docker-push
 
-REPO?=$(shell cat REPO)
-
 _conf_docker := $(shell [ -f ./Dockerfile ] && echo y || echo n)
 
 _help_target_docker := Builds and pushes a Docker container
@@ -13,7 +11,7 @@ _help_var_REPO := Docker repository/tag for container (excluding the version)
 $(call overridable,docker): docker-push
 
 ifeq ($(_conf_docker), y)
-$(call overridable,docker-build): docker-prerequisites staticbuild
+$(call overridable,docker-build): docker-prerequisites build-docker
 	$(call inform,Building docker container)
 	$(silent)docker build -t $(REPO):$(VERSION) .
 

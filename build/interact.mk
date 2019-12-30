@@ -3,6 +3,7 @@ ifdef V
 else
     silent := @
 endif
+_help_var_V := assign a non-empty value for verbose reporting
 
 # dark-magic trickery to get Make to write out a multi-line value to a file
 define nl :=

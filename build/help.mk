@@ -3,16 +3,19 @@ $(WHITE)USAGE$(NORMAL)
 
 $(GREEN)Targets:$(NORMAL)
  $(foreach hv,$(sort $(filter _help_target_%,$(.VARIABLES))),$(hv:_help_target_%=%): $(value $(hv))$(nl))
-
 $(GREEN)Variables:$(NORMAL)
  $(foreach hv,$(sort $(filter _help_var_%,$(.VARIABLES))),$(hv:_help_var_%=%): $(value $(hv))$(nl))
 
-In addition, define the following variables in your Makefile to override default behavior:
+$(WHITE)CONFIGURATION$(NORMAL)
 
+$(YELLOW)Makefile$(NORMAL)
 $(GREEN)Configuration Variables:$(NORMAL)
  $(foreach hv,$(sort $(filter _help_confvar_%,$(.VARIABLES))),$(hv:_help_confvar_%=%): $(value $(hv))$(nl))
-
 endef
 
-%:
+.PHONY: help
+help:
 	$(call say,$(NORMAL),$(_help_message))
+
+%:
+	$(call warn,Unknown target -- type 'make help' for usage instructions)

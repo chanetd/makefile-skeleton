@@ -5,7 +5,6 @@ This change will be pushed straight to origin.
 Are you sure? (y/n)
 endef
 
-_help_confvar_PRERELEASE_CHECKS := list of Makefile targets that perform prerelease checks (current: $(PRERELEASE_CHECKS))
 _help_var_GITHUB_TOKEN := GitHub token, needed to create releases on GitHub
 _help_var_GITLAB_TOKEN := GitLab token, needed to create releases on GitLab
 
