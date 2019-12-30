@@ -45,7 +45,7 @@ $(call overridable,release): prerelease-checks
 	$(silent)$(MAKE) update-licenses VERSION=$(RELEASE_VERSION)
 	$(silent)$(MAKE) set-version VERSION=$(RELEASE_VERSION)
 	$(silent)$(MAKE) tag-release VERSION=$(RELEASE_VERSION)
-	$(silent)$(MAKE) make-release-$(upstreeam_flavor) VERSION=$(RELEASE_VERSION)
+	$(silent)$(MAKE) make-release-$(upstream_flavor) VERSION=$(RELEASE_VERSION)
 	$(silent)$(MAKE) set-version VERSION=$(NEXT_VERSION)
 
 .PHONY: tag-release
