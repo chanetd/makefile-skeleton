@@ -3,7 +3,7 @@ _static_build_cmd := CGO_ENABLED=0 GOOS=linux go build -tags 'netgo osuersgo' -l
 _quick_build_cmd := go build -i $(_vendor_arg) .
 
 define build-one # args: dir, build command
-$(call inform, Building $(1))
+$(call inform,Building $(1))
 $(silent)cd $(1) && $(2)
 
 endef

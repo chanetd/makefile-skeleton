@@ -69,7 +69,7 @@ DEPRECATED:
 endef
 
 release-notes:
-	$(silent)echo -e "$(call escape-newlines, $(RELNOTES_TEMPLATE))" > release-notes
+	$(silent)echo -e "$(call escape-newlines,$(RELNOTES_TEMPLATE))" > release-notes
 	$(silent)$(EDITOR) ./release-notes
 
 
@@ -101,7 +101,7 @@ make-release-gitlab:
 
 .PHONY: update-licenses
 $(call overridable,update-licenses):
-	$(call inform, Updating licenses.csv)
+	$(call inform,Updating licenses.csv)
 	$(silent)go mod tidy
 	$(silent)go mod download
 	$(silent)echo 'Category,License,Dependency,Notes' > licenses.csv
