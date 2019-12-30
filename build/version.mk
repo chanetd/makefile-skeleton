@@ -11,4 +11,4 @@ $(call overridable,set-version):
 	$(call inform,Setting version $(VERSION) in VERSION file)
 	$(silent)echo -n $(VERSION) > VERSION
 	$(silent)git add VERSION
-	$(silent)[ -n "$$(git status --porcelain)" ] && git commit -m "set version v$(VERSION)" && git push
+	$(silent)[ -z "$$(git status --porcelain)" ] || (git commit -m "set version v$(VERSION)" && git push)

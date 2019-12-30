@@ -114,5 +114,5 @@ $(call overridable,update-licenses):
 	done
 	$(silent)rm .mods
 	$(silent)git add licenses.csv
-	$(silent)[ -n "$$(git status --porcelain)" ] && git commit -m "update licenses.csv (auto-generated)" && git push
+	$(silent)[ -z "$$(git status --porcelain)" ] || (git commit -m "update licenses.csv (auto-generated)" && git push)
 
