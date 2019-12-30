@@ -7,10 +7,16 @@ endef
 
 _help_confvar_PRERELEASE_CHECKS := list of Makefile targets that perform prerelease checks (current: $(PRERELEASE_CHECKS))
 _help_var_GITHUB_TOKEN := GitHub token, needed to create releases on GitHub
+_help_var_GITLAB_TOKEN := GitLab token, needed to create releases on GitLab
+
+upstream_flavor := $(shell us=$$(git ls-remote --get-url) ; \
+    if ( echo $$us | grep -q github.com ) ; then echo github ; \
+    elif ( echo $$us | grep -q gitlab.com ) ; then echo gitlab ; \
+    else echo unknown ; \
+    fi)
 
 .PHONY: prerelease-checks
-prerelease-checks: git-is-clean $(PRERELEASE_CHECKS)
-	$(call fail-if, [ -z "$$GITHUB_TOKEN" ],GITHUB_TOKEN env var is not set.)
+prerelease-checks: upstream-token-check-$(upstream_flavor) git-is-clean $(PRERELEASE_CHECKS)
 	$(call ask-for-confirmation, $(release-message))
 
 .PHONY: git-is-clean
@@ -18,6 +24,18 @@ git-is-clean:
 	$(call inform,Checking if the git repository is clean)
 	$(silent)git fetch --tags
 	$(call fail-if, [ -n "`git status --porcelain`" ],Git is not clean)
+
+.PHONY: upstream-token-check-github
+upstream-token-check-github:
+	$(call fail-if, [ -z "$$GITHUB_TOKEN" ],GITHUB_TOKEN env var is not set.)
+
+.PHONY: upstream-token-check-gitlab
+upstream-token-check-gitlab:
+	$(call fail-if, [ -z "$$GITLAB_TOKEN" ],GITLAB_TOKEN env var is not set.)
+
+.PHONY: upstream-token-check-unknown
+upstream-token-check-unknown:
+	$(call fatal,Unrecognized upstream URL; only github and gitlab upstreams are supported)
 
 
 _help_target_release := Tag release, update licenses, create release notes and create Github release
@@ -27,7 +45,7 @@ $(call overridable,release): prerelease-checks
 	$(silent)$(MAKE) update-licenses VERSION=$(RELEASE_VERSION)
 	$(silent)$(MAKE) set-version VERSION=$(RELEASE_VERSION)
 	$(silent)$(MAKE) tag-release VERSION=$(RELEASE_VERSION)
-	$(silent)$(MAKE) github-make-release VERSION=$(RELEASE_VERSION)
+	$(silent)$(MAKE) make-release-$(upstreeam_flavor) VERSION=$(RELEASE_VERSION)
 	$(silent)$(MAKE) set-version VERSION=$(NEXT_VERSION)
 
 .PHONY: tag-release
@@ -56,17 +74,30 @@ release-notes:
 	$(silent)$(EDITOR) ./release-notes
 
 
-.PHONY: github-make-release
-github-make-release:
-	$(call inform, Creating github release)
+.PHONY: make-release-github
+make-release-github:
+	$(call inform,Creating github release)
 	$(silent)git tag -l v$(VERSION) --format="%(subject)" > .tagsubject
 	$(silent)git tag -l v$(VERSION) --format="%(body)" > .tagbody
 	$(silent)git ls-remote --get-url | sed 's#.*github.com[:/]##' | sed s'/\.git$$//' > .upstream
 	$(silent)echo '{}' | \
-	    jq -c --arg tag "$(VERSION)" --arg name "$$(cat .tagsubject)" --arg body \
+	    jq -c --arg tag "v$(VERSION)" --arg name "$$(cat .tagsubject)" --arg body \
 	    "$$(cat .tagbody)" '.tag_name=$$tag | .name=$$name | .body=$$body' > .req
-	$(silent)curl -sf -XPOST --data$(silent)binary @.req https://api.github.com/repos/$$(cat .upstream)/releases?access_token=$(GITHUB_TOKEN)
+	$(silent)curl -sf -XPOST --data-binary @.req https://api.github.com/repos/$$(cat .upstream)/releases?access_token=$(GITHUB_TOKEN)
 	$(silent)rm .tagsubject .tagbody .upstream .req
+
+.PHONY: make-release-gitlab
+make-release-gitlab:
+	$(call inform,Creating gitlab release)
+	$(silent)git tag -l v$(VERSION) --format="%(subject)" > .tagsubject
+	$(silent)git tag -l v$(VERSION) --format="%(body)" > .tagbody
+	$(silent)git ls-remote --get-url | sed 's#.*gitlab.com[:/]##' | sed s'/\.git$$//' > .upstream
+	$(silent)cat .upstream | tr -d '\n' | curl -Gso /dev/null -w %{url_effective} --data-urlencode @- "" | cut -c 3- > .projectpath
+	$(silent)echo '{}' | \
+	    jq -c --arg tag "v$(VERSION)" --arg name "$$(cat .tagsubject)" --arg body \
+	    "$$(cat .tagbody)" '.tag_name=$$tag | .name=$$name | .description=$$body' > .req
+	$(silent)curl -sf -XPOST -H 'Content-Type: application/json' --data-binary @.req https://gitlab.com/api/v4/projects/$$(cat .projectpath)/releases?private_token=$(GITLAB_TOKEN)
+	$(silent)rm .tagsubject .tagbody .upstream .projectpath .req
 
 
 .PHONY: update-licenses
