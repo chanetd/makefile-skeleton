@@ -6,8 +6,7 @@ update-build-system:
 	$(call inform,Updating build system)
 	$(silent)-rm -rf .buildupd
 	$(silent)mkdir .buildupd
-	$(silent)cd .buildupd
-	$(silent)git clone $(origin_repo)
+	$(silent)cd .buildupd && git clone $(origin_repo)
 	$(silent)-rm -rf build
 	$(silent)mv $$(find .buildupd -name build -type d) ./build
 	$(silent)rm -rf .buildupd
