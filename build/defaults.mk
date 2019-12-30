@@ -1,6 +1,3 @@
-_help_projmk_VERSION := current version of this project
-_help_projmk_REPO := docker repository to push to
-
 ifeq ($(.DEFAULT_GOAL),)
     .DEFAULT_GOAL := build-local
 endif
