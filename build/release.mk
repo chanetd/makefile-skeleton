@@ -22,7 +22,9 @@ prerelease-checks: upstream-token-check-$(upstream_flavor) git-is-clean $(PREREL
 git-is-clean:
 	$(call inform,Checking if the git repository is clean)
 	$(silent)git fetch --tags
-	$(call fail-if, [ -n "`git status --porcelain`" ],Git is not clean)
+	$(call fail-if, [ -n "`git status --porcelain`" ],There are untracked or modified files in the git repository)
+	$(call fail-if, [ -n "`git status --porcelain -b | grep ahead`" ],This branch is ahead of origin)
+	$(call fail-if, [ -n "`git status --porcelain -b | grep behind`" ],This branch is behind origin)
 
 .PHONY: upstream-token-check-github
 upstream-token-check-github:
