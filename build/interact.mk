@@ -43,7 +43,7 @@ define say # args: color, message
 endef
 
 define ask-for-confirmation
-$(call inform,$(1))
+$(call warn,$(1))
 @read -n 1 -t 10 decision && [ "$$decision" == "y" ]
 endef
 
