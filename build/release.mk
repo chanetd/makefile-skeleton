@@ -47,6 +47,7 @@ $(call overridable,release): prerelease-checks
 
 .PHONY: release-git
 release-git: release-git-$(godep_flavor)
+	$(call warn,godep_flavor is $(godep_flavor))
 
 .PHONY: release-git-mod
 release-git-mod:
