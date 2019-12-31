@@ -59,11 +59,11 @@ release-git-mod:
 release-git-dep:
 	$(call inform,Creating release branch v$(RELEASE_VERSION) to vendor dependencies)
 	$(silent)git branch --show-current > .branch
-	$(silent)git checkout -b v$(RELEASE_VERSION)
+	$(silent)git checkout -b release-v$(RELEASE_VERSION)
 	$(silent)dep ensure
 	$(silent)git add --force vendor
 	$(silent)git commit -a -m "vendoring dependencies for release v$(RELEASE_VERSION)"
-	$(silent)git push -u origin v$(RELEASE_VERSION)
+	$(silent)git push -u origin release-v$(RELEASE_VERSION)
 	$(silent)$(MAKE) set-version VERSION=$(RELEASE_VERSION)
 	$(silent)$(MAKE) tag-release VERSION=$(RELEASE_VERSION)
 	$(silent)git checkout $$(cat .branch)
