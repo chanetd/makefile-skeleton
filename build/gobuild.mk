@@ -1,7 +1,11 @@
 godep_flavor := $(shell ([ -f go.mod ] && echo mod) || ([ -f Gopkg.toml ] && echo dep) || echo none)
 
+ifeq ($(godep_flavor),mod)
 _vendor_arg := $$( [ -d vendor ] && echo '-mod=vendor' )
-_static_build_cmd := CGO_ENABLED=0 GOOS=linux go build -tags 'netgo osuersgo' -ldflags '-extldflags "-static"' $(_vendor_arg) .
+else
+_vendor_arg :=
+endif
+_static_build_cmd := CGO_ENABLED=0 GOOS=linux go build -tags 'netgo osusergo' -ldflags '-extldflags "-static"' $(_vendor_arg) .
 _quick_build_cmd := go build -i $(_vendor_arg) .
 
 define build-one # args: dir, build command
