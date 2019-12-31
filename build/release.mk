@@ -155,6 +155,7 @@ update-licenses-dep:
 	$(silent)go list -deps -f '{{.Dir}}' . | grep '/vendor/' | grep -v Klarrio > .deps
 	$(silent)for dep in $$(cat .deps) ; do \
 	    license=$$(license-detector -f json $$dep | jq -r '.[0].matches[0].license') ; \
+	    mod=$$(echo $$dep | sed 's#^.*/vendor/##') ; \
 	    echo "$$license,$$license,$$mod," >> licenses.csv ; \
 	done
 	$(silent)rm .deps
