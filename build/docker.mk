@@ -13,7 +13,7 @@ $(call overridable,docker): docker-push
 ifeq ($(_conf_docker), y)
 $(call overridable,docker-build): docker-prerequisites build-docker
 	$(call inform,Building docker container)
-	$(silent)docker build -t $(REPO):$(VERSION) .
+	$(silent)docker build --no-cache -t $(REPO):$(VERSION) .
 
 $(call overridable,docker-push): docker-build
 	$(call inform,Pushing docker container)

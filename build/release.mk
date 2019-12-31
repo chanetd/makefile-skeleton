@@ -42,9 +42,37 @@ _help_target_release := Tag release, update licenses, create release notes and c
 $(call overridable,release): prerelease-checks
 	$(silent)$(MAKE) docker-push VERSION=$(RELEASE_VERSION)
 	$(silent)$(MAKE) update-licenses VERSION=$(RELEASE_VERSION)
+	$(silent)$(MAKE) release-git VERSION=$(RELEASE_VERSION)
+	$(silent)$(MAKE) make-release-$(upstream_flavor) VERSION=$(RELEASE_VERSION)
+
+.PHONY: release-git
+release-git: release-git-$(godep_flavor)
+
+.PHONY: release-git-mod
+release-git-mod:
 	$(silent)$(MAKE) set-version VERSION=$(RELEASE_VERSION)
 	$(silent)$(MAKE) tag-release VERSION=$(RELEASE_VERSION)
-	$(silent)$(MAKE) make-release-$(upstream_flavor) VERSION=$(RELEASE_VERSION)
+	$(silent)$(MAKE) set-version VERSION=$(NEXT_VERSION)
+
+.PHONY: release-git-dep
+release-git-dep:
+	$(call inform,Creating release branch v$(RELEASE_VERSION) to vendor dependencies)
+	$(silent)git branch --show-current > .branch
+	$(silent)git checkout -b v$(RELEASE_VERSION)
+	$(silent)dep ensure
+	$(silent)git add --force vendor
+	$(silent)git commit -a -m "vendoring dependencies for release v$(RELEASE_VERSION)"
+	$(silent)git push -u origin v$(RELEASE_VERSION)
+	$(silent)$(MAKE) set-version VERSION=$(RELEASE_VERSION)
+	$(silent)$(MAKE) tag-release VERSION=$(RELEASE_VERSION)
+	$(silent)git checkout $$(cat .branch)
+	$(silent)$(MAKE) set-version VERSION=$(NEXT_VERSION)
+	$(silent)rm .branch
+
+.PHONY: release-git-none
+release-git-none:
+	$(silent)$(MAKE) set-version VERSION=$(RELEASE_VERSION)
+	$(silent)$(MAKE) tag-release VERSION=$(RELEASE_VERSION)
 	$(silent)$(MAKE) set-version VERSION=$(NEXT_VERSION)
 
 .PHONY: tag-release
