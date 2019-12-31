@@ -18,4 +18,5 @@ help:
 	$(call say,$(NORMAL),$(_help_message))
 
 %:
-	$(call warn,Unknown target -- type 'make help' for usage instructions)
+	$(call warn,Unknown target '$@' -- type 'make help' for usage instructions)
+	@false
