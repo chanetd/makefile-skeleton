@@ -1,3 +1,4 @@
 include build/*.mk
 
-all: staticbuild
+.PHONY: all
+all: docker-push
