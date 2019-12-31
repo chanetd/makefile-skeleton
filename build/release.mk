@@ -165,6 +165,6 @@ update-licenses-dep:
 
 .PHONY: update-licenses-none
 update-licenses-none:
-	$(call inform,No dependency information -- not updating licenses.csv)
+	$(call warn,No dependency information -- not updating licenses.csv)
 
 

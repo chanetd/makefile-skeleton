@@ -2,6 +2,8 @@ ifeq ($(.DEFAULT_GOAL),)
     .DEFAULT_GOAL := build-local
 endif
 
+VERSION ?= 0.0.1-SNAPSHOT
+
 PRERELEASE_CHECKS ?= test lint
 _help_confvar_PRERELEASE_CHECKS := list of Makefile targets that perform prerelease checks (current: $(PRERELEASE_CHECKS))
 
