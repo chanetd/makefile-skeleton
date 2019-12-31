@@ -130,6 +130,10 @@ make-release-gitlab:
 
 .PHONY: update-licenses
 $(call overridable,update-licenses):
+	$(silent)$(MAKE) update-licenses-$(godep_flavor)
+
+.PHONY: update-licenses-mod
+update-licenses-mod:
 	$(call inform,Updating licenses.csv)
 	$(silent)go mod tidy
 	$(silent)go mod download
@@ -143,4 +147,22 @@ $(call overridable,update-licenses):
 	$(silent)rm .mods
 	$(silent)git add licenses.csv
 	$(silent)[ -z "$$(git status --porcelain)" ] || (git commit -m "update licenses.csv (auto-generated)" && git push)
+
+.PHONY: update-licenses-dep
+update-licenses-dep:
+	$(call inform,Updating licenses.csv)
+	$(silent)echo 'Category,License,Dependency,Notes' > licenses.csv
+	$(silent)go list -deps -f '{{.Dir}}' . | grep '/vendor/' | grep -v Klarrio > .deps
+	$(silent)for dep in $$(cat .deps) ; do \
+	    license=$$(license-detector -f json $$dep | jq -r '.[0].matches[0].license') ; \
+	    echo "$$license,$$license,$$mod," >> licenses.csv ; \
+	done
+	$(silent)rm .deps
+	$(silent)git add licenses.csv
+	$(silent)[ -z "$$(git status --porcelain)" ] || (git commit -m "update licenses.csv (auto-generated)" && git push)
+
+.PHONY: update-licenses-none
+update-licenses-none:
+	$(call inform,No dependency information -- not updating licenses.csv)
+
 
