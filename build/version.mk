@@ -1,4 +1,7 @@
-sinclude version.mk
+ifeq ($(call shell-condition, [ -f version.mk ]),y)
+    include version.mk
+endif
+
 CLEAN_VERSION:=$(shell echo $(VERSION) | sed 's/-.*$$//')
 RELEASE_VERSION?=$(shell echo $(VERSION) | sed 's/-SNAPSHOT$$//')
 NEXT_VERSION?=$(shell echo $(CLEAN_VERSION) | awk -F. '{ printf("%d.%d.%d", $$1, $$2, $$3 + 1) }')-SNAPSHOT
