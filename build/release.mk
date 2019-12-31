@@ -151,6 +151,7 @@ update-licenses-mod:
 .PHONY: update-licenses-dep
 update-licenses-dep:
 	$(call inform,Updating licenses.csv)
+	$(silent)dep ensure
 	$(silent)echo 'Category,License,Dependency,Notes' > licenses.csv
 	$(silent)go list -deps -f '{{.Dir}}' . | grep '/vendor/' | grep -v Klarrio > .deps
 	$(silent)for dep in $$(cat .deps) ; do \
