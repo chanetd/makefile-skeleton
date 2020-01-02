@@ -14,14 +14,12 @@ $(silent)cd $(1) && $(2)
 
 endef
 
-_help_target_build-docker := Build binaries for inclusion in Docker container
-.PHONY: build-docker
-$(call overridable,build-docker):
+.PHONY: build-docker-go
+build-docker-go:
 	$(foreach d, $(BINDIRS), $(call build-one, $(d), $(_static_build_cmd)))
 
-_help_target_build-local := Build all packages for the local machine
-.PHONY: build-local
-$(call overridable,build-local):
+.PHONY: build-local-go
+build-local-go:
 ifneq ($(strip $(BINDIRS)), )
 	$(foreach d, $(BINDIRS), $(call build-one, $(d), $(_quick_build_cmd)))
 else
@@ -29,14 +27,12 @@ else
 	$(silent)go build -i ./...
 endif
 
-_help_target_test := Runs all tests
-.PHONY: test
-$(call overridable,test):
+.PHONY: test-go
+test-go:
 	$(call inform,Running go test)
 	$(silent)go test ./...
 
-_help_target_lint := Runs the linter
-.PHONY: lint
-$(call overridable,lint):
+.PHONY: lint-go
+lint-go:
 	$(call inform,Linting)
 	$(silent)golangci-lint run

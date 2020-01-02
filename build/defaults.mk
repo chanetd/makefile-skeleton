@@ -1,6 +1,4 @@
-ifeq ($(.DEFAULT_GOAL),)
-    .DEFAULT_GOAL := build-local
-endif
+.DEFAULT_GOAL := build-local
 
 VERSION ?= 0.0.1-SNAPSHOT
 
