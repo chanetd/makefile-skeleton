@@ -1,1 +1,5 @@
 - support for other languages than go
+- introduce docker-stage target
+- build-local -> build
+- build-static -> go-specific
+- update-licenses: type-dependent

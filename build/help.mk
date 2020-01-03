@@ -17,6 +17,14 @@ endef
 help:
 	$(call say,$(NORMAL),$(_help_message))
 
-%:
-	$(call warn,Unknown target '$@' -- type 'make help' for usage instructions)
-	@false
+# override logic:
+# lowest precedence is default implementation (in build/*.mk)
+# then type-specific implementation (in build/types/$(TYPE)/*.mk)
+# highest precedence is overrides in user Makefiles
+#
+%: $(TYPE)/% ;
+
+$(TYPE)/%: default/% ;
+
+default/%:
+	$(call fatal,Unknown target '$(shell basename $@)' -- type 'make help' for usage instructions)

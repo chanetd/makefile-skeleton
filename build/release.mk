@@ -40,46 +40,21 @@ upstream-token-check-unknown:
 
 
 _help_target_release := Tag release, update licenses, create release notes and create Github release
-.PHONY: release
-$(call overridable,release): prerelease-checks
+.PHONY: default/release
+default/release: prerelease-checks
 	$(silent)$(MAKE) docker-push VERSION=$(RELEASE_VERSION)
 	$(silent)$(MAKE) update-licenses VERSION=$(RELEASE_VERSION)
 	$(silent)$(MAKE) release-git VERSION=$(RELEASE_VERSION)
 	$(silent)$(MAKE) make-release-$(upstream_flavor) VERSION=$(RELEASE_VERSION)
 
-.PHONY: release-git
-release-git:
-	$(silent)$(MAKE) release-git-$(godep_flavor)
-
-.PHONY: release-git-mod
-release-git-mod:
+.PHONY: default/release-git
+default/release-git:
 	$(silent)$(MAKE) set-version VERSION=$(RELEASE_VERSION)
 	$(silent)$(MAKE) tag-release VERSION=$(RELEASE_VERSION)
 	$(silent)$(MAKE) set-version VERSION=$(NEXT_VERSION)
 
-.PHONY: release-git-dep
-release-git-dep:
-	$(call inform,Creating release branch v$(RELEASE_VERSION) to vendor dependencies)
-	$(silent)git branch --show-current > .branch
-	$(silent)git checkout -b release-v$(RELEASE_VERSION)
-	$(silent)dep ensure
-	$(silent)git add --force vendor
-	$(silent)git commit -a -m "vendoring dependencies for release v$(RELEASE_VERSION)"
-	$(silent)git push -u origin release-v$(RELEASE_VERSION)
-	$(silent)$(MAKE) set-version VERSION=$(RELEASE_VERSION)
-	$(silent)$(MAKE) tag-release VERSION=$(RELEASE_VERSION)
-	$(silent)git checkout $$(cat .branch)
-	$(silent)$(MAKE) set-version VERSION=$(NEXT_VERSION)
-	$(silent)rm .branch
-
-.PHONY: release-git-none
-release-git-none:
-	$(silent)$(MAKE) set-version VERSION=$(RELEASE_VERSION)
-	$(silent)$(MAKE) tag-release VERSION=$(RELEASE_VERSION)
-	$(silent)$(MAKE) set-version VERSION=$(NEXT_VERSION)
-
-.PHONY: tag-release
-tag-release: release-notes
+.PHONY: default/tag-release
+default/tag-release: release-notes
 	$(silent)git tag -a v$(VERSION) -F release-notes
 	$(silent)git push -u origin v$(VERSION)
 	$(silent)rm release-notes
@@ -130,43 +105,6 @@ make-release-gitlab:
 	$(silent)rm .tagsubject .tagbody .upstream .projectpath .req
 
 
-.PHONY: update-licenses
-$(call overridable,update-licenses):
-	$(silent)$(MAKE) update-licenses-$(godep_flavor)
-
-.PHONY: update-licenses-mod
-update-licenses-mod:
-	$(call inform,Updating licenses.csv)
-	$(silent)go mod tidy
-	$(silent)go mod download
-	$(silent)echo 'Category,License,Dependency,Notes' > licenses.csv
-	$(silent)go list -m -f '{{ .Path }}' all | grep -v Klarrio > .mods
-	$(silent)for mod in $$(cat .mods) ; do \
-	    modpath=$$(go list -m -f '{{ .Dir }}' $$mod) ; \
-	    license=$$(license-detector -f json $$modpath | jq -r '.[0].matches[0].license') ; \
-	    echo "$$license,$$license,$$mod," >> licenses.csv ; \
-	done
-	$(silent)rm .mods
-	$(silent)git add licenses.csv
-	$(silent)[ -z "$$(git status --porcelain)" ] || (git commit -m "update licenses.csv (auto-generated)" && git push)
-
-.PHONY: update-licenses-dep
-update-licenses-dep:
-	$(call inform,Updating licenses.csv)
-	$(silent)dep ensure
-	$(silent)echo 'Category,License,Dependency,Notes' > licenses.csv
-	$(silent)go list -deps -f '{{.Dir}}' . | grep '/vendor/' | grep -v Klarrio > .deps
-	$(silent)for dep in $$(cat .deps) ; do \
-	    license=$$(license-detector -f json $$dep | jq -r '.[0].matches[0].license') ; \
-	    mod=$$(echo $$dep | sed 's#^.*/vendor/##') ; \
-	    echo "$$license,$$license,$$mod," >> licenses.csv ; \
-	done
-	$(silent)rm .deps
-	$(silent)git add licenses.csv
-	$(silent)[ -z "$$(git status --porcelain)" ] || (git commit -m "update licenses.csv (auto-generated)" && git push)
-
-.PHONY: update-licenses-none
-update-licenses-none:
-	$(call warn,No dependency information -- not updating licenses.csv)
-
-
+.PHONY: default/update-licenses
+default/update-licenses:
+	$(unimplemented)

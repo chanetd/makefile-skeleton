@@ -14,12 +14,12 @@ $(silent)cd $(1) && $(2)
 
 endef
 
-.PHONY: build-docker-go
-build-docker-go:
+.PHONY: go/build-docker
+go/build-docker:
 	$(foreach d, $(BINDIRS), $(call build-one, $(d), $(_static_build_cmd)))
 
-.PHONY: build-local-go
-build-local-go:
+.PHONY: go/build-local
+go/build-local:
 ifneq ($(strip $(BINDIRS)), )
 	$(foreach d, $(BINDIRS), $(call build-one, $(d), $(_quick_build_cmd)))
 else
@@ -27,12 +27,12 @@ else
 	$(silent)go build -i ./...
 endif
 
-.PHONY: test-go
-test-go:
+.PHONY: go/test
+go/test:
 	$(call inform,Running go test)
 	$(silent)go test ./...
 
-.PHONY: lint-go
-lint-go:
+.PHONY: go/lint
+go/lint:
 	$(call inform,Linting)
 	$(silent)golangci-lint run

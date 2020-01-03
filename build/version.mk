@@ -9,8 +9,9 @@ _help_var_VERSION := Version for snapshot docker container tagging (current: $(V
 _help_var_RELEASE_VERSION := Version for release, derived from \$$VERSION if unspecified (current: $(RELEASE_VERSION))
 _help_var_NEXT_VERSION := Next version to put in version.mk file on release (current: $(NEXT_VERSION))
 
-.PHONY: set-version
-$(call overridable,set-version):
+_help_target_set-version := Set project version -- you should normally never have to call this by hand as this is handled automatically by the 'release' target.
+.PHONY: default/set-version
+default/set-version:
 	$(call inform,Setting version $(VERSION) in version.mk)
 	$(silent)echo VERSION=$(VERSION) > version.mk
 	$(silent)git add version.mk

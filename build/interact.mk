@@ -54,3 +54,7 @@ endef
 define fail-if # args: condition, message
 $(if $(call shell-condition, $(1)), $(call fatal,$(2)), )
 endef
+
+define unimplemented
+$(call warn,Target $(shell basename $@) is not implemented for project type $(TYPE))
+endef
