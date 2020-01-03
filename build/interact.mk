@@ -5,6 +5,13 @@ else
 endif
 _help_var_V := assign a non-empty value for verbose reporting
 
+ifdef Y
+    confirmation := n
+else
+    confirmation := y
+endif
+_help_var_Y := assign a non-empty value to skip confirmation questions
+
 # dark-magic trickery to get Make to write out a multi-line value to a file
 define nl :=
 
@@ -42,10 +49,14 @@ define say # args: color, message
 @echo -e "$(1)$(call escape-newlines,$(2))$(NORMAL)"
 endef
 
+ifeq ($(confirmation),y)
 define ask-for-confirmation
 $(call warn,$(1))
 @read -n 1 -t 10 decision && [ "$$decision" == "y" ]
 endef
+else
+ask-for-confirmation := @true
+endif
 
 define shell-condition # args: shell command
 $(shell ($(1) > /dev/null 2> /dev/null) && echo y)

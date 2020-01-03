@@ -1,3 +1,2 @@
 - installer script w/ auto-conversion of project.json
-- force mode for releasing from CI (skip confirmation)
 - guard .mk files against multiple inclusion
