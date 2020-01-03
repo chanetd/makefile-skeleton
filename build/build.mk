@@ -1,11 +1,6 @@
-_help_target_build-docker := Build binaries for inclusion in Docker container
-.PHONY: default/build-docker
-default/build-docker:
-	$(unimplemented)
-
-_help_target_build-local := Build all packages for the local machine
-.PHONY: default/build-local
-default/build-local:
+_help_target_build-local := Build the project
+.PHONY: default/build
+default/build:
 	$(unimplemented)
 
 _help_target_test := Runs all tests

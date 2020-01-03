@@ -14,12 +14,13 @@ $(silent)cd $(1) && $(2)
 
 endef
 
+_help_target_build-docker := Build static binaries for linux/amd64 for inclusion in a Docker container.
 .PHONY: go/build-docker
 go/build-docker:
 	$(foreach d, $(BINDIRS), $(call build-one, $(d), $(_static_build_cmd)))
 
-.PHONY: go/build-local
-go/build-local:
+.PHONY: go/build
+go/build:
 ifneq ($(strip $(BINDIRS)), )
 	$(foreach d, $(BINDIRS), $(call build-one, $(d), $(_quick_build_cmd)))
 else

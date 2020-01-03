@@ -1,4 +1,5 @@
 TYPE=go
+REPO=chanetd/mftest
 
 include build/main.mk
 

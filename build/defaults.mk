@@ -1,4 +1,4 @@
-.DEFAULT_GOAL := build-local
+.DEFAULT_GOAL := help
 
 VERSION ?= 0.0.1-SNAPSHOT
 
