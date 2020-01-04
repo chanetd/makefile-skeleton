@@ -1,2 +1,1 @@
 - installer script w/ auto-conversion of project.json
-- guard .mk files against multiple inclusion

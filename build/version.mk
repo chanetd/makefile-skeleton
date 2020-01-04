@@ -1,3 +1,10 @@
+ifndef _build_main_mk
+include build/main.mk
+endif
+
+ifndef _build_version_mk
+_build_version_mk := y
+
 ifeq ($(call shell-condition, [ -f version.mk ]),y)
     include version.mk
 endif
@@ -16,3 +23,5 @@ default/set-version:
 	$(silent)echo VERSION=$(VERSION) > version.mk
 	$(silent)git add version.mk
 	$(silent)[ -z "$$(git status --porcelain)" ] || (git commit -m "set version v$(VERSION)" && git push)
+
+endif #_build_version_mk

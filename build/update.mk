@@ -1,3 +1,10 @@
+ifndef _build_main_mk
+include build/main.mk
+endif
+
+ifndef _build_update_mk
+_build_update_mk := y
+
 origin_repo := git@github.com:chanetd/makefile-skeleton
 
 _help_target_update-build-system := fetch latest version of build system from $(origin_repo)
@@ -11,3 +18,5 @@ update-build-system:
 	$(silent)mv $$(find .buildupd -name build -type d) ./build
 	$(silent)rm -rf .buildupd
 	$(silent)git add build/*
+
+endif #_build_update_mk

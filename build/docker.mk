@@ -1,3 +1,10 @@
+ifndef _build_main_mk
+include build/main.mk
+endif
+
+ifndef _build_docker_mk
+_build_docker_mk := y
+
 _conf_docker := $(shell [ -f ./Dockerfile ] && echo y || echo n)
 
 _help_target_docker-push := Builds and pushes a Docker container
@@ -34,4 +41,6 @@ default/docker-build: docker-stage
 default/docker-stage:
 	$(call inform,No Dockerfile in root directory -- not staging a docker container)
 
-endif
+endif #_conf_docker
+
+endif #_build_docker_mk

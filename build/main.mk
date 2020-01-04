@@ -1,3 +1,6 @@
+ifndef _build_main_mk
+_build_main_mk := y
+
 # generic functionality
 include build/interact.mk
 include build/update.mk
@@ -14,3 +17,5 @@ include build/release.mk
 
 # keep help last
 include build/help.mk
+
+endif #_build_main_mk

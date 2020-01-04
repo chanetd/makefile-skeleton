@@ -1,3 +1,10 @@
+ifndef _build_main_mk
+include build/main.mk
+endif
+
+ifndef _build_prerequisites_mk
+_build_prerequisites_mk := y
+
 # add local .bin directory to path
 export PATH := $(shell pwd)/.bin:$(PATH)
 
@@ -28,3 +35,5 @@ install-prerequisites: .bin $(installable-missing-prereqs:%=install-%) ;
 	$(silent)mkdir -p .bin
 	$(silent)[ -f .gitignore ] || (touch .gitignore && git add .gitignore)
 	$(silent)grep -q -F .bin/ .gitignore || (echo -e '# locally installed build prerequisites\n.bin/' >> .gitignore && git add .gitignore)
+
+endif #_build_prerequisites_mk

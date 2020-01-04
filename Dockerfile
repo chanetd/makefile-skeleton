@@ -1,3 +1,2 @@
-FROM scratch
-RUN mkdir /bin
+FROM alpine:latest
 ADD cmd/hello/hello /bin

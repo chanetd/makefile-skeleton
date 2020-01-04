@@ -1,3 +1,10 @@
+ifndef _build_main_mk
+include build/main.mk
+endif
+
+ifndef _build_release_mk
+_build_release_mk := y
+
 define release-message =
 You are about to release version $(RELEASE_VERSION) of this project.
 The version number will be incremented to $(NEXT_VERSION).
@@ -108,3 +115,6 @@ make-release-gitlab:
 .PHONY: default/update-licenses
 default/update-licenses:
 	$(unimplemented)
+
+endif #_build_release_mk
+

@@ -1,3 +1,10 @@
+ifndef _build_main_mk
+include build/main.mk
+endif
+
+ifndef _build_help_mk
+_build_help_mk := y
+
 define _help_message
 $(WHITE)USAGE$(NORMAL)
 
@@ -28,3 +35,5 @@ $(TYPE)/%: default/% ;
 
 default/%:
 	$(call fatal,Unknown target '$(shell basename $@)' -- type 'make help' for usage instructions)
+
+endif #_build_help_mk

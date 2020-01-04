@@ -1,3 +1,10 @@
+ifndef _build_main_mk
+include build/main.mk
+endif
+
+ifndef _build_interact_mk
+_build_interact_mk := y
+
 ifdef V
     silent :=
 else
@@ -69,3 +76,5 @@ endef
 define unimplemented
 $(call warn,Target $(shell basename $@) is not implemented for project type $(TYPE))
 endef
+
+endif #_build_interact_mk
