@@ -18,6 +18,9 @@ $(WHITE)CONFIGURATION$(NORMAL)
 $(YELLOW)Makefile$(NORMAL)
 $(GREEN)Configuration Variables:$(NORMAL)
  $(foreach hv,$(sort $(filter _help_confvar_%,$(.VARIABLES))),$(hv:_help_confvar_%=%): $(value $(hv))$(nl))
+$(YELLOW)Available git hooks$(NORMAL)
+ $(if $(_available_hooks),$(foreach hook,$(sort $(_available_hooks)),$(hook): $(value _hook_file_$(hook))$(nl)),(none))
+
 endef
 
 .PHONY: help

@@ -8,8 +8,11 @@ include build/version.mk
 
 include build/defaults.mk
 
-# type-dependent functionality
+# type-specific functionality
 include build/types.mk
+
+# the includes below all depend on type-specific overrides
+include build/hooks.mk
 include build/docker.mk
 include build/build.mk
 include build/prerequisites.mk
